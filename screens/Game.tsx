@@ -23,6 +23,17 @@ export const Game = () => {
   const [end, setEnd] = useState<boolean>(false);
   const [firstAI, setFirstAI] = useState<boolean>(params.firstAI);
 
+  useEffect(() => {
+    if (matches <= 0) {
+      setEnd(true);
+    }
+    if (firstAI) {
+      setAITurn(true);
+      AI(0);
+      setFirstAI(false);
+    }
+  }, [matches, firstAI]);
+
   const AI = (userPick: number) => {
     let AIPick = 0;
 
@@ -108,17 +119,6 @@ export const Game = () => {
     }, 2000);
   };
 
-  useEffect(() => {
-    if (matches <= 0) {
-      setEnd(true);
-    }
-    if (firstAI) {
-      setAITurn(true);
-      AI(0);
-      setFirstAI(false);
-    }
-  }, [matches, firstAI, AI]);
-
   const handlePick = (userPick: number) => {
     setMatches(matches - userPick);
     setUserMatches(userMatches + userPick);
@@ -138,6 +138,9 @@ export const Game = () => {
     setUserMatches(0);
     setAIMatches(0);
     setAITurn(false);
+    if (params.firstAI) {
+      setFirstAI(true);
+    }
     setEnd(false);
   };
 
@@ -181,7 +184,11 @@ export const Game = () => {
             <Text>Your matches: {userMatches}</Text>
             <Text>Opponent's matches: {AIMatches}</Text>
           </View>
-          <Button disabled={end} title={'Restart'} onPress={restart} />
+          <Button
+            disabled={AITurn || end}
+            title={'Restart'}
+            onPress={restart}
+          />
         </View>
       </View>
       {end && (
